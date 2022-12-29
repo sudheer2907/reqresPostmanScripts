@@ -1,0 +1,376 @@
+{
+	"info": {
+		"_postman_id": "82757547-e721-48c9-82e5-4de659930f3c",
+		"name": "reqRes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5908145"
+	},
+	"item": [
+		{
+			"name": "GetUsersREQRES",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Status Code\", function() {\r",
+							"pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify Basic Details\", function () {\r",
+							"    var response = pm.response.json();\r",
+							"    pm.expect(response.per_page).to.eql(parseInt(pm.environment.get(\"per_pageCount\")));\r",
+							"    pm.expect(response.page).to.eql(parseInt(pm.environment.get(\"pageCount\")));\r",
+							"    pm.expect(response.total).to.eql(parseInt(pm.environment.get(\"totalCount\")));\r",
+							"    pm.expect(response.total_pages).to.eql(parseInt(pm.environment.get(\"total_pagesCount\")));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify Support Details\", function () {\r",
+							"    var response = pm.response.json();\r",
+							"    pm.expect(response.support.url).to.eql(pm.globals.get(\"ReqResSupportURL\"));\r",
+							"    pm.expect(response.support.text).to.eql(\"To keep ReqRes free, contributions towards server costs are appreciated!\")\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify Data Json Array\",function() {\r",
+							"var response = pm.response.json();\r",
+							"var jsonDataArray = response.data;\r",
+							"for(var i=0;i<jsonDataArray.length;i++) {\r",
+							"  pm.expect(jsonDataArray[i].id).to.be.a(\"number\");\r",
+							"  pm.expect(jsonDataArray[i].email).to.be.a(\"string\"); \r",
+							"  pm.expect(jsonDataArray[i].first_name).to.be.a(\"string\"); \r",
+							"}\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify total number of users\", function() {\r",
+							"    var response = pm.response.json();\r",
+							"    pm.expect(response.data.length).eql(6);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify JSON Array Data\", function(){\r",
+							"    var response = pm.response.json();\r",
+							"    var jsonDataArray = response.data;\r",
+							"    for(var i=0;i<jsonDataArray.length;i++) {\r",
+							"        if(jsonDataArray[i].first_name == \"Michael\") {\r",
+							"             pm.expect(jsonDataArray[i].last_name).eql(\"Lawson\");\r",
+							"             pm.expect(jsonDataArray[i].email).eql(\"michael.lawson@reqres.in\");\r",
+							"        }\r",
+							"    } \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get jsonArray Data and pass it to environment variable and read the value from the environment variable\", function(){\r",
+							"    var response = pm.response.json();\r",
+							"    var jsonDataArray = response.data;\r",
+							"    for(var i=0;i<jsonDataArray.length;i++) {\r",
+							"        if(jsonDataArray[i].first_name == \"Michael\") {\r",
+							"            var jsonObjectData = jsonDataArray[i];\r",
+							"            console.log(jsonObjectData);\r",
+							"            pm.environment.set(\"userCreatedPayload\", JSON.stringify(jsonObjectData));\r",
+							"            console.log(pm.globals.get(\"userCreatedPayload\"));\r",
+							"            var readEnvironmentJsonVariable = JSON.parse(pm.environment.get(\"userCreatedPayload\"));\r",
+							"            console.log(readEnvironmentJsonVariable)\r",
+							"        }\r",
+							"    } \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users?page=2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostUsersREQRES",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Status Code\", function() {\r",
+							"pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify Details of User Created\", function() {\r",
+							"    var respose = pm.response.json();\r",
+							"    pm.expect(respose.name).to.eql(\"morpheus\");\r",
+							"    pm.expect(respose.job).to.eql(\"leader\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"User will be created with below details\");\r",
+							"console.log(\"Name: \" + pm.variables.get(\"nameString\"));\r",
+							"console.log(\"Job: \" + pm.variables.get(\"jobString\"));\r",
+							"console.log(\"Before creating new users, verifying is services are up and running\");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"leader\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ReqResBaseUrl}}/api/users",
+					"host": [
+						"{{ReqResBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PutUsersREQRES",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Status Code\", function() {\r",
+							"pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify Updated Date\", function() {\r",
+							"var response = pm.response.json();\r",
+							"pm.expect(response.updatedAt).to.be.a(\"string\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{nameString}}\",\r\n    \"job\": \"{{jobString}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{ReqResBaseUrl}}/api/users/2",
+					"host": [
+						"{{ReqResBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetInvalidUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Test Invalid Users Details\", function() {\r",
+							"pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ReqResBaseUrl}}/api/unknown/23",
+					"host": [
+						"{{ReqResBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"unknown",
+						"23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PatchUsersReqRes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Test partial update of an user\", function() {\r",
+							"    var respose = pm.response.json();\r",
+							"    pm.expect(respose.name).to.eql(pm.environment.get(\"nameString\"));\r",
+							"    pm.expect(respose.job).to.eql(pm.environment.get(\"jobString\"));\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"name\":\"{{nameString}}\",\r\n \"job\":\"{{jobString}}\"   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ReqResBaseUrl}}/api/2",
+					"host": [
+						"{{ReqResBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetResponseTimeReqRes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Test ReqRes Response Duration\", function(){\r",
+							"    pm.expect(pm.response.responseTime).to.be.greaterThan(pm.environment.get(\"delay\"));\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ReqResBaseUrl}}/api/users?delay={{delay}}",
+					"host": [
+						"{{ReqResBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "delay",
+							"value": "{{delay}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostCreateUserReadJsonPayloadFile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Payload",
+							"description": "Input payload kept into json file.",
+							"type": "file",
+							"src": "/C:/Users/GS-2879/eclipse-workspace/postman/createUsers.json"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{ReqResBaseUrl}}/api/users",
+					"host": [
+						"{{ReqResBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "dummyreq",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
